@@ -6,10 +6,15 @@ namespace UltimateASP
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile() {
+        public MappingProfile()
+        {
             CreateMap<Company, CompanyDto>()
-                .ForCtorParam("FullAdress",
+                .ForMember(c => c.FullAdress,
                 opt => opt.MapFrom(x => string.Join(' ', x.Address, x.Country)));
+            CreateMap<Employee, EmployeeDto>();
+            CreateMap<Company, CompanyForCreationDto>();
+            CreateMap<CompanyForCreationDto, Company>();
+            CreateMap<EmployeeForCreationDto, Employee>();
         }
     }
 }

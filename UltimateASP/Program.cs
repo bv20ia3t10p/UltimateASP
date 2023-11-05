@@ -14,7 +14,12 @@ builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddControllers()
+builder.Services
+    .AddControllers(config => { config.RespectBrowserAcceptHeader = true;
+        config.ReturnHttpNotAcceptable = true;
+    })
+    .AddXmlDataContractSerializerFormatters()
+    .AddCustomCsvFormatter()
     .AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -48,6 +53,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
+
+app.MapControllers();
 app.Use(async (context, next) =>
 {
     Console.WriteLine($"Logic before delegate");
@@ -59,6 +66,7 @@ app.Use(async (context, next) =>
 //    Console.WriteLine($"Writing response");
 //    await context.Response.WriteAsync("Hello from middleware");
 //});
+
 app.Map("/usingmapbranch", builder =>
 {
     builder.Use(async (context, next) =>
@@ -73,13 +81,12 @@ app.Map("/usingmapbranch", builder =>
         await context.Response.WriteAsync("Hello from the nwe branch.");
     });
 });
-app.MapWhen(context => context.Request.Query.ContainsKey("testquerystring"), builder =>{
+
+app.MapWhen(context => context.Request.Query.ContainsKey("testquerystring"), builder => {
     builder.Run(async context =>
     {
         await context.Response.WriteAsync("Hello from the mapwhen");
         Console.WriteLine("Mapwhen logic");
     });
 });
-app.MapControllers();
-
 app.Run();
