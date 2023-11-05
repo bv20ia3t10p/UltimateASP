@@ -13,7 +13,7 @@ namespace Repositories
         public EmployeeRepository(RepositoryContext context) : base(context) { }
         public IEnumerable<Employee> GetEmployees(Guid companyId, bool trackChanges) => Get(e => e.CompanyId.Equals(companyId), trackChanges).OrderBy(e => e.Name).ToList();
         public Employee GetEmployee(Guid companyId, Guid employeeId, bool trackChanges) =>
-            Get(e => e.Id.Equals(employeeId) && e.CompanyId.Equals(companyId), trackChanges).OrderBy(e => e.Name).SingleOrDefault();
+            Get(e => e.Id.Equals(employeeId) && e.CompanyId.Equals(companyId), trackChanges).SingleOrDefault();
         public void CreateEmployeeForCompany(Guid companyId, Employee employee)
         {
             employee.CompanyId = companyId;

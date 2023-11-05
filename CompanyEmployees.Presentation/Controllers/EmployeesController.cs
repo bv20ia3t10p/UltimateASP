@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace CompanyEmployees.Presentation.Controllers
 {
@@ -43,6 +44,21 @@ namespace CompanyEmployees.Presentation.Controllers
         public IActionResult DeleteEmployeeInCompany(Guid companyId, Guid employeeId)
         {
             _service.EmployeeService.DeleteEmployee(companyId,employeeId,trackChanges:false);
+            return NoContent();
+        }
+        [HttpPut("{employeeId:guid}")]
+        public IActionResult UpdateEmployeeInCompany(Guid companyId, Guid employeeId, [FromBody] EmployeeForUpdateDto employee)
+        {
+            _service.EmployeeService.UpdateEmployee(companyId, employeeId, employee, compTrackChanges: false, empTrackChanges:true);
+            return NoContent();
+        }
+        [HttpPatch("{employeeId:guid}")]
+        public IActionResult PartiallyUpdateEmployeeForCompany(Guid companyId,Guid employeeId, [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
+        {
+            if (patchDoc is null) return BadRequest("patchDoc object sent is null");
+            var result = _service.EmployeeService.GetEmployeeForPatch(companyId, employeeId, compTrackChanges: false, empTrackChanges: true);
+            patchDoc.ApplyTo(result.employeeToPatch);
+            _service.EmployeeService.saveChangesForPatch(result.employeeToPatch, result.employeeEntity);
             return NoContent();
         }
     }
