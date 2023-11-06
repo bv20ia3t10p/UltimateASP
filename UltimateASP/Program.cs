@@ -25,7 +25,9 @@ builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services
-    .AddControllers(config => { config.RespectBrowserAcceptHeader = true;
+    .AddControllers(config =>
+    {
+        config.RespectBrowserAcceptHeader = true;
         config.ReturnHttpNotAcceptable = true;
         config.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
     })
@@ -60,7 +62,7 @@ app.UseStaticFiles();
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.All
-}) ;
+});
 app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
@@ -93,7 +95,8 @@ app.Map("/usingmapbranch", builder =>
     });
 });
 
-app.MapWhen(context => context.Request.Query.ContainsKey("testquerystring"), builder => {
+app.MapWhen(context => context.Request.Query.ContainsKey("testquerystring"), builder =>
+{
     builder.Run(async context =>
     {
         await context.Response.WriteAsync("Hello from the mapwhen");

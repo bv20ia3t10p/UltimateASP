@@ -20,7 +20,11 @@ namespace Repositories
         }
         public ICompanyRepository Company => _companyRepository.Value;
         public IEmployeeRepository Employee => _employeeRepository.Value;
-        public void Save() => _context.SaveChanges();
+        public void Save() {
+            _context.ChangeTracker.DetectChanges();
+            Console.WriteLine(_context.ChangeTracker.DebugView.LongView);
+            _context.SaveChanges();
+        }
 
     }
 }

@@ -17,7 +17,7 @@ namespace Repositories
         public IQueryable<T> GetAll(bool trackChanges) => !trackChanges ?
             RepositoryContext.Set<T>().AsNoTracking() :
             RepositoryContext.Set<T>();
-        public IQueryable<T> Get(Expression<Func<T, bool>> expression, bool trackChanges) => trackChanges ?
+        public IQueryable<T> Get(Expression<Func<T, bool>> expression, bool trackChanges) => !trackChanges ?
             RepositoryContext.Set<T>()
             .Where(expression)
             .AsNoTracking() :
